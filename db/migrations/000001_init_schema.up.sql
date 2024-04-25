@@ -4,9 +4,9 @@ CREATE TABLE "accounts" (
   "username" varchar NOT NULL,
   "email" varchar,
   "password_hash" varchar,
-  "created_at" timestampz NOT NULL DEFAULT (now()),
-  "updated_at" timestampz NOT NULL DEFAULT (now()),
-  "deleted_at" timestampz
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now()),
+  "deleted_at" timestamptz
 );
 
 CREATE TABLE "roles" (
@@ -14,10 +14,10 @@ CREATE TABLE "roles" (
   "title" varchar NOT NULL,
   "slug" varchar NOT NULL,
   "active" bool DEFAULT true,
-  "description" tinytext,
-  "created_at" timestampz NOT NULL DEFAULT (now()),
-  "updated_at" timestampz NOT NULL DEFAULT (now()),
-  "deleted_at" timestampz
+  "description" varchar(500),
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now()),
+  "deleted_at" timestamptz
 );
 
 CREATE TABLE "permissions" (
@@ -25,26 +25,26 @@ CREATE TABLE "permissions" (
   "title" varchar NOT NULL,
   "slug" varchar NOT NULL,
   "active" bool DEFAULT true,
-  "description" tinytext,
-  "created_at" timestampz NOT NULL DEFAULT (now()),
-  "updated_at" timestampz NOT NULL DEFAULT (now()),
-  "deleted_at" timestampz
+  "description" varchar(500),
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now()),
+  "deleted_at" timestamptz
 );
 
 CREATE TABLE "role_permission" (
   "role_id" bigint,
   "permission_id" bigint,
-  "created_at" timestampz NOT NULL DEFAULT (now()),
-  "updated_at" timestampz NOT NULL DEFAULT (now()),
-  "deleted_at" timestampz
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now()),
+  "deleted_at" timestamptz
 );
 
 CREATE TABLE "account_permission" (
   "account_id" bigint,
   "permission_id" bigint,
-  "created_at" timestampz NOT NULL DEFAULT (now()),
-  "updated_at" timestampz NOT NULL DEFAULT (now()),
-  "deleted_at" timestampz
+  "created_at" timestamptz NOT NULL DEFAULT (now()),
+  "updated_at" timestamptz NOT NULL DEFAULT (now()),
+  "deleted_at" timestamptz
 );
 
 CREATE INDEX ON "accounts" ("username");
