@@ -32,16 +32,16 @@ CREATE TABLE "permissions" (
 );
 
 CREATE TABLE "role_permission" (
-  "role_id" bigint,
-  "permission_id" bigint,
+  "role_id" bigint NOT NULL,
+  "permission_id" bigint NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now()),
   "deleted_at" timestamptz
 );
 
 CREATE TABLE "account_permission" (
-  "account_id" bigint,
-  "permission_id" bigint,
+  "account_id" bigint NOT NULL,
+  "permission_id" bigint NOT NULL,
   "created_at" timestamptz NOT NULL DEFAULT (now()),
   "updated_at" timestamptz NOT NULL DEFAULT (now()),
   "deleted_at" timestamptz

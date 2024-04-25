@@ -13,4 +13,7 @@ migrateup:
 migratedown:
     migrate -path db/migrations -database "postgres://default:lZsIkJCjEV97@ep-round-voice-37130748-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require" -verbose down
 
-.PHONY: postgres createdb dropdb migrateup migratedown
+sqlc:
+    sqlc generate
+
+.PHONY: postgres createdb dropdb migrateup migratedown sqlc
