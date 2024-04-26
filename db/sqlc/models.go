@@ -20,8 +20,8 @@ type Account struct {
 }
 
 type AccountPermission struct {
-	AccountID    *int64    `json:"account_id"`
-	PermissionID *int64    `json:"permission_id"`
+	AccountID    int64     `json:"account_id"`
+	PermissionID int64     `json:"permission_id"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 	DeletedAt    time.Time `json:"deleted_at"`
@@ -50,8 +50,8 @@ type Role struct {
 }
 
 type RolePermission struct {
-	RoleID       *int64    `json:"role_id"`
-	PermissionID *int64    `json:"permission_id"`
+	RoleID       int64     `json:"role_id"`
+	PermissionID int64     `json:"permission_id"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 	DeletedAt    time.Time `json:"deleted_at"`

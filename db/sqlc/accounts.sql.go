@@ -76,8 +76,8 @@ SELECT id, role_id, username, email, created_at, updated_at
 FROM accounts
 WHERE 
   (
-    username LIKE $3
-    OR email LIKE $3
+    username LIKE '%' || $3 || '%' OR
+    email LIKE '%' || $3 || '%'
   )
   AND deleted_at IS NULL
 ORDER BY username
@@ -86,9 +86,9 @@ OFFSET $2
 `
 
 type GetListAccountsParams struct {
-	Limit    int32  `json:"limit"`
-	Offset   int32  `json:"offset"`
-	Username string `json:"username"`
+	Limit   int32   `json:"limit"`
+	Offset  int32   `json:"offset"`
+	Keyword *string `json:"keyword"`
 }
 
 type GetListAccountsRow struct {
@@ -101,7 +101,7 @@ type GetListAccountsRow struct {
 }
 
 func (q *Queries) GetListAccounts(ctx context.Context, arg GetListAccountsParams) ([]GetListAccountsRow, error) {
-	rows, err := q.db.Query(ctx, getListAccounts, arg.Limit, arg.Offset, arg.Username)
+	rows, err := q.db.Query(ctx, getListAccounts, arg.Limit, arg.Offset, arg.Keyword)
 	if err != nil {
 		return nil, err
 	}
