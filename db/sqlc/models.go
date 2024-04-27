@@ -14,6 +14,7 @@ type Account struct {
 	Username     string    `json:"username"`
 	Email        *string   `json:"email"`
 	PasswordHash *string   `json:"password_hash"`
+	LastLogin    time.Time `json:"last_login"`
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 	DeletedAt    time.Time `json:"deleted_at"`
@@ -55,4 +56,17 @@ type RolePermission struct {
 	CreatedAt    time.Time `json:"created_at"`
 	UpdatedAt    time.Time `json:"updated_at"`
 	DeletedAt    time.Time `json:"deleted_at"`
+}
+
+type Session struct {
+	ID         int64   `json:"id"`
+	Key        string  `json:"key"`
+	Value      string  `json:"value"`
+	Ip         *string `json:"ip"`
+	ExtendData []byte  `json:"extend_data"`
+	// Expired time in seconds
+	ExpriredAt *int64    `json:"exprired_at"`
+	CreatedAt  time.Time `json:"created_at"`
+	UpdatedAt  time.Time `json:"updated_at"`
+	DeletedAt  time.Time `json:"deleted_at"`
 }
