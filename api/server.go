@@ -15,10 +15,20 @@ func NewServer(store *db.Store) *Server {
 	server := &Server{store: store}
 	router := gin.Default()
 
-	router.GET("/accounts", func(c *gin.Context) {})
-	router.POST("/accounts", func(c *gin.Context) {})
-	router.PUT("/accounts/change-password", func(c *gin.Context) {})
+	router.GET("/accounts/:id", server.getAccountById)
+
+	router.POST("/auth/register", server.register)
+	router.POST("/auth/login", server.login)
+	router.PUT("/auth/change-password", func(c *gin.Context) {})
 
 	server.router = router
 	return server
+}
+
+func (server *Server) Start(address string) error {
+	return server.router.Run(address)
+}
+
+func errorResponse(err error) gin.H {
+	return gin.H{"error": err.Error()}
 }

@@ -16,6 +16,14 @@ WHERE
   AND deleted_at IS NULL
 LIMIT 1;
 
+-- name: GetAccountById :one
+SELECT id, role_id, username, email, created_at, updated_at
+FROM accounts
+WHERE 
+  id = $1
+  AND deleted_at IS NULL
+LIMIT 1;
+
 -- name: GetListAccounts :many
 SELECT id, role_id, username, email, created_at, updated_at
 FROM accounts

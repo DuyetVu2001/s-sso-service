@@ -39,6 +39,38 @@ func (q *Queries) CreateAccount(ctx context.Context, arg CreateAccountParams) (C
 	return i, err
 }
 
+const getAccountById = `-- name: GetAccountById :one
+SELECT id, role_id, username, email, created_at, updated_at
+FROM accounts
+WHERE 
+  id = $1
+  AND deleted_at IS NULL
+LIMIT 1
+`
+
+type GetAccountByIdRow struct {
+	ID        int64     `json:"id"`
+	RoleID    *int64    `json:"role_id"`
+	Username  string    `json:"username"`
+	Email     *string   `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+func (q *Queries) GetAccountById(ctx context.Context, id int64) (GetAccountByIdRow, error) {
+	row := q.db.QueryRow(ctx, getAccountById, id)
+	var i GetAccountByIdRow
+	err := row.Scan(
+		&i.ID,
+		&i.RoleID,
+		&i.Username,
+		&i.Email,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const getAccountInfo = `-- name: GetAccountInfo :one
 SELECT id, role_id, username, email, created_at, updated_at
 FROM accounts
