@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	db "sso-service/db/sqlc"
 
 	"github.com/gin-gonic/gin"
 )
@@ -59,8 +60,36 @@ func (server *Server) getAccountById(ctx *gin.Context) {
 
 	account, err := server.store.GetAccountById(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"account": account})
+}
+
+type getListAccountsRequest struct {
+	Offset int32 `form:"offset" binding:"required,min=1"`
+	Limit  int32 `form:"limit" binding:"required,min=1,max=50"`
+}
+
+func (server *Server) getListAccounts(ctx *gin.Context) {
+	var req getListAccountsRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	args := db.GetListAccountsParams{
+		Limit:  req.Limit,
+		Offset: (req.Offset - 1) * req.Limit,
+	}
+
+	accounts, err := server.store.GetListAccounts(ctx, args)
+	if err != nil {
+
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"accounts": accounts})
 }

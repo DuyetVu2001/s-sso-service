@@ -108,8 +108,8 @@ SELECT id, role_id, username, email, created_at, updated_at
 FROM accounts
 WHERE 
   (
-    username LIKE '%' || $3 || '%' OR
-    email LIKE '%' || $3 || '%'
+    username LIKE '%' || COALESCE($3, '') || '%' OR
+    email LIKE '%' || COALESCE($3, '') || '%'
   )
   AND deleted_at IS NULL
 ORDER BY username

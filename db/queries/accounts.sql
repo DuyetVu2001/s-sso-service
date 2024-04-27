@@ -29,8 +29,8 @@ SELECT id, role_id, username, email, created_at, updated_at
 FROM accounts
 WHERE 
   (
-    username LIKE '%' || @keyword || '%' OR
-    email LIKE '%' || @keyword || '%'
+    username LIKE '%' || COALESCE(@keyword, '') || '%' OR
+    email LIKE '%' || COALESCE(@keyword, '') || '%'
   )
   AND deleted_at IS NULL
 ORDER BY username
