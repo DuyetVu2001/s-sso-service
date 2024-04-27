@@ -7,13 +7,18 @@ import (
 	"os"
 	"sso-service/api"
 	db "sso-service/db/sqlc"
+	"sso-service/util"
 
 	"github.com/jackc/pgx/v5"
 )
 
 func main() {
-	dbUrl := "postgres://default:lZsIkJCjEV97@ep-round-voice-37130748-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require"
-	conn, err := pgx.Connect(context.Background(), dbUrl)
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal("cannot load config: ", err)
+	}
+
+	conn, err := pgx.Connect(context.Background(), config.POSTGRES_URL)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "cannot connect to db: %v\n", err)
 	}
@@ -22,7 +27,7 @@ func main() {
 	store := db.NewStore(conn)
 	server := api.NewServer(store)
 
-	err = server.Start("localhost:8080")
+	err = server.Start(config.SERVER_ADDRESS)
 	if err != nil {
 		log.Fatal("cannot start server:", err)
 	}
