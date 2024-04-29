@@ -11,11 +11,12 @@ import (
 )
 
 func createRandomAccount(t *testing.T) CreateAccountRow {
-	passwordHash := "PasswordHash"
+	hashedPassword, err := util.HashPassword(util.RandomString(6))
+	require.NoError(t, err)
 
 	args := CreateAccountParams{
 		Username:     util.RandomUsername(),
-		PasswordHash: &passwordHash,
+		PasswordHash: &hashedPassword,
 	}
 
 	account, err := testQueries.CreateAccount(context.Background(), args)
@@ -35,9 +36,9 @@ func TestCreateAccount(t *testing.T) {
 	createRandomAccount(t)
 }
 
-func TestGetAccountInfo(t *testing.T) {
+func TestGetAccountByUsername(t *testing.T) {
 	accountCreated := createRandomAccount(t)
-	account, err := testQueries.GetAccountInfo(context.Background(), accountCreated.Username)
+	account, err := testQueries.GetAccountByUsername(context.Background(), accountCreated.Username)
 
 	require.NoError(t, err)
 	require.NotEmpty(t, account)
@@ -69,7 +70,7 @@ func TestHardDeleteAccount(t *testing.T) {
 	errDelete := testQueries.HardDeleteAccount(context.Background(), accountCreated.ID)
 	require.NoError(t, errDelete)
 
-	account, err := testQueries.GetAccountInfo(context.Background(), accountCreated.Username)
+	account, err := testQueries.GetAccountByUsername(context.Background(), accountCreated.Username)
 	require.Error(t, err)
 	require.EqualError(t, err, pgx.ErrNoRows.Error())
 

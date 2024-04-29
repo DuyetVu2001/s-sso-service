@@ -8,8 +8,8 @@ INSERT INTO accounts(
 )
 RETURNING id, username, created_at;
 
--- name: GetAccountInfo :one
-SELECT id, role_id, username, email, created_at, updated_at
+-- name: GetAccountByUsername :one
+SELECT id, role_id, username, email, password_hash, created_at, updated_at
 FROM accounts
 WHERE 
   username = $1

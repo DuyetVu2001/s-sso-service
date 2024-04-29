@@ -3,18 +3,22 @@ package api
 import (
 	"net/http"
 	db "sso-service/db/sqlc"
+	"sso-service/util"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 type registerRequest struct {
-	Username string `json:"username" binding:"required"`
+	Username string `json:"username" binding:"required,alphanum"`
 	Password string `json:"password" binding:"required"`
 }
 
-type loginRequest struct {
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
+type userResponse struct {
+	ID        int64     `json:"id"`
+	Username  string    `json:"username"`
+	Email     *string   `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func (server *Server) register(ctx *gin.Context) {
@@ -24,12 +28,34 @@ func (server *Server) register(ctx *gin.Context) {
 		return
 	}
 
-	if req.Username != "manu" || req.Password != "123" {
-		ctx.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+	hashedPassword, err := util.HashPassword(req.Password)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
+	args := db.CreateAccountParams{
+		Username:     req.Username,
+		PasswordHash: &hashedPassword,
+	}
+
+	user, err := server.store.CreateAccount(ctx, args)
+	if err != nil {
+		if db.ErrorCode(err) == db.ErrUniqueViolation.Code {
+			ctx.JSON(http.StatusForbidden, errorResponse(err))
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"user": user})
+}
+
+type loginRequest struct {
+	Username string `json:"username" binding:"required,alphanum"`
+	Password string `json:"password" binding:"required"`
 }
 
 func (server *Server) login(ctx *gin.Context) {
@@ -39,12 +65,26 @@ func (server *Server) login(ctx *gin.Context) {
 		return
 	}
 
-	if req.Username != "manu" || req.Password != "123" {
+	user, err := server.store.GetAccountByUsername(ctx, req.Username)
+	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
+	err = util.VerifyPassword(*user.PasswordHash, req.Password)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	res := userResponse{
+		ID:        user.ID,
+		Username:  user.Username,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "you are logged in", "user": res})
 }
 
 type getAccountByIdRequest struct {

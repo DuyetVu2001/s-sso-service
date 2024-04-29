@@ -13,6 +13,9 @@ migrateup:
 migratedown:
     migrate -path db/migrations -database "postgres://default:lZsIkJCjEV97@ep-round-voice-37130748-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require" -verbose down
 
+migratedown1:
+    migrate -path db/migrations -database "postgres://default:lZsIkJCjEV97@ep-round-voice-37130748-pooler.ap-southeast-1.aws.neon.tech:5432/verceldb?sslmode=require" -verbose down 1
+
 sqlc:
     sqlc generate
 
@@ -22,4 +25,4 @@ test:
 server:
     go run main.go
 
-.PHONY: postgres createdb dropdb migrateup migratedown sqlc test server
+.PHONY: postgres createdb dropdb migrateup migratedown migratedown1 sqlc test server

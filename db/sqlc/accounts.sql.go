@@ -71,8 +71,8 @@ func (q *Queries) GetAccountById(ctx context.Context, id int64) (GetAccountByIdR
 	return i, err
 }
 
-const getAccountInfo = `-- name: GetAccountInfo :one
-SELECT id, role_id, username, email, created_at, updated_at
+const getAccountByUsername = `-- name: GetAccountByUsername :one
+SELECT id, role_id, username, email, password_hash, created_at, updated_at
 FROM accounts
 WHERE 
   username = $1
@@ -80,23 +80,25 @@ WHERE
 LIMIT 1
 `
 
-type GetAccountInfoRow struct {
-	ID        int64     `json:"id"`
-	RoleID    *int64    `json:"role_id"`
-	Username  string    `json:"username"`
-	Email     *string   `json:"email"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+type GetAccountByUsernameRow struct {
+	ID           int64     `json:"id"`
+	RoleID       *int64    `json:"role_id"`
+	Username     string    `json:"username"`
+	Email        *string   `json:"email"`
+	PasswordHash *string   `json:"password_hash"`
+	CreatedAt    time.Time `json:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at"`
 }
 
-func (q *Queries) GetAccountInfo(ctx context.Context, username string) (GetAccountInfoRow, error) {
-	row := q.db.QueryRow(ctx, getAccountInfo, username)
-	var i GetAccountInfoRow
+func (q *Queries) GetAccountByUsername(ctx context.Context, username string) (GetAccountByUsernameRow, error) {
+	row := q.db.QueryRow(ctx, getAccountByUsername, username)
+	var i GetAccountByUsernameRow
 	err := row.Scan(
 		&i.ID,
 		&i.RoleID,
 		&i.Username,
 		&i.Email,
+		&i.PasswordHash,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)

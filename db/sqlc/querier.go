@@ -11,7 +11,7 @@ import (
 type Querier interface {
 	CreateAccount(ctx context.Context, arg CreateAccountParams) (CreateAccountRow, error)
 	GetAccountById(ctx context.Context, id int64) (GetAccountByIdRow, error)
-	GetAccountInfo(ctx context.Context, username string) (GetAccountInfoRow, error)
+	GetAccountByUsername(ctx context.Context, username string) (GetAccountByUsernameRow, error)
 	GetListAccounts(ctx context.Context, arg GetListAccountsParams) ([]GetListAccountsRow, error)
 	HardDeleteAccount(ctx context.Context, id int64) error
 	SoftDeleteAccount(ctx context.Context, id int64) error
